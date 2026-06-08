@@ -21,5 +21,7 @@
         <key>NSAllowsLocalNetworking</key>
         <true/>
     </dict>
+    <key>NSHighResolutionCapable</key>
+    <true/>
 </dict>
 </plist>

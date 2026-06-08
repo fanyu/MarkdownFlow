@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		12086D5768CAC833A03EB192 /* SourceEditorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A5F631992E466928491357 /* SourceEditorCommand.swift */; };
 		400D56FD6C0803A397FE4413 /* SourceEditorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311979637F2FE7ACF41E4CA6 /* SourceEditorExtension.swift */; };
 		8BF0315CD807395E5AAD9449 /* MarkdownPreviewExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = D7CA819B7BBB42A0A54054D9 /* MarkdownPreviewExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A1BEBB0A9236A73571543EAF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513EB813CE6FFAC1E8127ADD /* AppDelegate.swift */; };
@@ -44,6 +45,7 @@
 		4E5603D25C430E8BB7AE3896 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		513EB813CE6FFAC1E8127ADD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7082982025A7A52DBD0FBA8A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A2A5F631992E466928491357 /* SourceEditorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEditorCommand.swift; sourceTree = "<group>"; };
 		D7CA819B7BBB42A0A54054D9 /* MarkdownPreviewExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MarkdownPreviewExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -53,6 +55,7 @@
 			children = (
 				4E5603D25C430E8BB7AE3896 /* Info.plist */,
 				48A11361903AB1A78EB34C63 /* MarkdownPreviewExtension.entitlements */,
+				A2A5F631992E466928491357 /* SourceEditorCommand.swift */,
 				311979637F2FE7ACF41E4CA6 /* SourceEditorExtension.swift */,
 			);
 			path = MarkdownPreviewExtension;
@@ -169,6 +172,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				12086D5768CAC833A03EB192 /* SourceEditorCommand.swift in Sources */,
 				400D56FD6C0803A397FE4413 /* SourceEditorExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
