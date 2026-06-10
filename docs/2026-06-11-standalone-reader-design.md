@@ -89,8 +89,9 @@ notification and launches the app if needed.
 - `LSUIElement` removed (regular app)
 - `CFBundleDocumentTypes` (Viewer role for markdown UTI) +
   `UTImportedTypeDeclarations` for `.md` / `.markdown` / `.mdown`
-- Entitlements unchanged: app unsandboxed (AppleScript + arbitrary file
-  reads), extension sandboxed with shared App Group
+- Entitlements: app unsandboxed (AppleScript + arbitrary file reads),
+  extension sandboxed. The v1 App Group was dropped — the extension only
+  posts a distributed notification, no shared storage needed
 
 ## Error Handling
 

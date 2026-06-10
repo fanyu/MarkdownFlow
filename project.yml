@@ -9,7 +9,7 @@ settings:
   base:
     SWIFT_VERSION: "5.9"
     MACOSX_DEPLOYMENT_TARGET: "13.0"
-    DEVELOPMENT_TEAM: ""
+    DEVELOPMENT_TEAM: K52WP93HZU
 
 targets:
   MarkdownPreviewApp:
@@ -39,3 +39,14 @@ targets:
         INFOPLIST_FILE: MarkdownPreviewExtension/Info.plist
         CODE_SIGN_ENTITLEMENTS: MarkdownPreviewExtension/MarkdownPreviewExtension.entitlements
         CODE_SIGN_STYLE: Automatic
+        # XcodeKit lives in Xcode's Developer frameworks, not the SDK
+        FRAMEWORK_SEARCH_PATHS:
+          - $(inherited)
+          - $(DEVELOPER_FRAMEWORKS_DIR)
+        LD_RUNPATH_SEARCH_PATHS:
+          - $(inherited)
+          - $(DEVELOPER_FRAMEWORKS_DIR)
+        OTHER_LDFLAGS:
+          - $(inherited)
+          - -weak_framework
+          - XcodeKit
