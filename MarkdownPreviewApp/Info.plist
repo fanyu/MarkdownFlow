@@ -12,6 +12,8 @@
     <string>1.0</string>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>NSAppleEventsUsageDescription</key>
     <string>MarkdownPreview needs to read which file is open in Xcode to show a preview.</string>
     <key>NSPrincipalClass</key>
