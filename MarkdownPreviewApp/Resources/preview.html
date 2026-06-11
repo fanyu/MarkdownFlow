@@ -48,9 +48,8 @@
     padding: 0;
   }
   #content {
-    max-width: 820px;
     margin: 0 auto;
-    padding: 28px 36px 64px;
+    padding: 28px clamp(28px, 4.5vw, 80px) 64px;
   }
   h1, h2, h3, h4, h5, h6 { scroll-margin-top: 12px; font-weight: 600; line-height: 1.25; }
   h1, h2 { border-bottom: 1px solid var(--heading-border); padding-bottom: .3em; }
@@ -100,7 +99,42 @@
   hr { background-color: var(--border); border: 0; height: .25em; margin: 24px 0; }
   ul.contains-task-list { list-style: none; padding-left: 1.2em; }
   li.task-list-item input[type=checkbox] { margin-right: .5em; }
-  .mermaid { background: transparent; text-align: center; margin: 16px 0; }
+  .mermaid {
+    background: transparent;
+    text-align: center;
+    margin: 16px 0;
+    overflow-x: auto;
+    cursor: zoom-in;
+  }
+  #zoom-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .82);
+    display: none;
+    z-index: 100;
+    overflow: hidden;
+    cursor: grab;
+  }
+  #zoom-overlay.open { display: block; }
+  #zoom-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: 0 0;
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 24px;
+  }
+  #zoom-content svg { display: block; max-width: none !important; }
+  #zoom-hint {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, .75);
+    font-size: 12px;
+    pointer-events: none;
+  }
   .mermaid-error {
     border: 1px solid #d1242f;
     border-radius: 6px;
@@ -117,6 +151,10 @@
 </head>
 <body>
 <div id="content"></div>
+<div id="zoom-overlay">
+  <div id="zoom-content"></div>
+  <div id="zoom-hint">滚轮/双指缩放 · 拖拽平移 · 点击或 Esc 关闭</div>
+</div>
 
 <script src="marked.min.js"></script>
 <script src="mermaid.min.js"></script>
@@ -152,16 +190,41 @@
     if (currentTheme === 'auto') setTheme('auto');
   });
 
+  let headingIds = [];
+
   function postTOC() {
     const headings = [];
     document.querySelectorAll('#content h1, #content h2, #content h3, #content h4').forEach((h, i) => {
       h.id = 'heading-' + i;
       headings.push({ id: h.id, text: h.textContent, level: parseInt(h.tagName[1]) });
     });
+    headingIds = headings.map(h => h.id);
     if (window.webkit?.messageHandlers?.toc) {
       window.webkit.messageHandlers.toc.postMessage(headings);
     }
   }
+
+  // Scroll spy: report the heading currently at the top of the viewport
+  let spyTicking = false;
+  let lastSpy = null;
+  function reportSpy() {
+    let current = headingIds[0] || null;
+    for (const id of headingIds) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      if (el.getBoundingClientRect().top <= 100) current = id;
+      else break;
+    }
+    if (current !== lastSpy) {
+      lastSpy = current;
+      window.webkit?.messageHandlers?.spy?.postMessage(current);
+    }
+  }
+  window.addEventListener('scroll', () => {
+    if (spyTicking) return;
+    spyTicking = true;
+    requestAnimationFrame(() => { spyTicking = false; reportSpy(); });
+  }, { passive: true });
 
   function scrollToHeading(id) {
     document.getElementById(id)?.scrollIntoView();
@@ -210,6 +273,11 @@
       const source = div.textContent;
       try {
         await mermaid.run({ nodes: [div] });
+        div.title = '点击放大';
+        div.addEventListener('click', () => {
+          const svg = div.querySelector('svg');
+          if (svg) openZoom(svg);
+        });
       } catch (e) {
         div.className = 'mermaid-error';
         div.textContent = 'Mermaid error: ' + (e.message || e) + '\n\n' + source;
@@ -218,7 +286,71 @@
 
     postTOC();
     window.scrollTo(0, scrollY);
+    lastSpy = null;
+    reportSpy();
   }
+
+  // === Diagram zoom overlay: wheel/pinch to zoom, drag to pan ===
+  const overlay = document.getElementById('zoom-overlay');
+  const zoomContent = document.getElementById('zoom-content');
+  let zScale = 1, zX = 0, zY = 0;
+  let dragging = false, dragMoved = false, lastX = 0, lastY = 0;
+
+  function applyZoom() {
+    zoomContent.style.transform = `translate(${zX}px, ${zY}px) scale(${zScale})`;
+  }
+
+  function openZoom(svg) {
+    zoomContent.innerHTML = '';
+    const clone = svg.cloneNode(true);
+    clone.style.maxWidth = 'none';
+    const vb = clone.viewBox && clone.viewBox.baseVal;
+    const w = (vb && vb.width) || svg.getBoundingClientRect().width || 800;
+    const h = (vb && vb.height) || svg.getBoundingClientRect().height || 600;
+    clone.setAttribute('width', w);
+    clone.setAttribute('height', h);
+    zoomContent.appendChild(clone);
+    overlay.classList.add('open');
+    const pad = 48;
+    const fit = Math.min((innerWidth - pad * 2) / w, (innerHeight - pad * 2) / h, 4);
+    zScale = fit;
+    zX = (innerWidth - w * fit) / 2 - 24 * fit;
+    zY = (innerHeight - h * fit) / 2 - 24 * fit;
+    applyZoom();
+  }
+
+  function closeZoom() {
+    overlay.classList.remove('open');
+    zoomContent.innerHTML = '';
+  }
+
+  overlay.addEventListener('wheel', e => {
+    e.preventDefault();
+    const factor = Math.exp(-e.deltaY * 0.0022);
+    zX = e.clientX - (e.clientX - zX) * factor;
+    zY = e.clientY - (e.clientY - zY) * factor;
+    zScale *= factor;
+    applyZoom();
+  }, { passive: false });
+
+  overlay.addEventListener('mousedown', e => {
+    dragging = true; dragMoved = false;
+    lastX = e.clientX; lastY = e.clientY;
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    zX += e.clientX - lastX; zY += e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    if (Math.abs(e.movementX) + Math.abs(e.movementY) > 1) dragMoved = true;
+    applyZoom();
+  });
+  window.addEventListener('mouseup', () => {
+    if (dragging && !dragMoved) closeZoom();
+    dragging = false;
+  });
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeZoom();
+  });
 
   applyTheme();
 </script>

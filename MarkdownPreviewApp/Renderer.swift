@@ -13,6 +13,7 @@ final class Renderer: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
     let webView: WKWebView
 
     var onTOCChanged: (([Heading]) -> Void)?
+    var onCurrentHeadingChanged: ((String?) -> Void)?
 
     private var templateLoaded = false
     private var pendingJS: [String] = []
@@ -22,6 +23,7 @@ final class Renderer: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         webView = WKWebView(frame: .zero, configuration: config)
         super.init()
         config.userContentController.add(self, name: "toc")
+        config.userContentController.add(self, name: "spy")
         webView.navigationDelegate = self
         webView.setValue(false, forKey: "drawsBackground")  // avoid white flash in dark mode
         loadTemplate()
@@ -76,14 +78,21 @@ final class Renderer: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
 
     func userContentController(_ userContentController: WKUserContentController,
                                didReceive message: WKScriptMessage) {
-        guard message.name == "toc", let items = message.body as? [[String: Any]] else { return }
-        let headings = items.compactMap { item -> Heading? in
-            guard let id = item["id"] as? String,
-                  let text = item["text"] as? String,
-                  let level = item["level"] as? Int else { return nil }
-            return Heading(id: id, text: text, level: level)
+        switch message.name {
+        case "toc":
+            guard let items = message.body as? [[String: Any]] else { return }
+            let headings = items.compactMap { item -> Heading? in
+                guard let id = item["id"] as? String,
+                      let text = item["text"] as? String,
+                      let level = item["level"] as? Int else { return nil }
+                return Heading(id: id, text: text, level: level)
+            }
+            onTOCChanged?(headings)
+        case "spy":
+            onCurrentHeadingChanged?(message.body as? String)
+        default:
+            break
         }
-        onTOCChanged?(headings)
     }
 
     // MARK: - Private

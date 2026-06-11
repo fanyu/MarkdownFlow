@@ -9,15 +9,14 @@ struct MarkdownWebView: NSViewRepresentable {
     let theme: String
     let zoom: Double
     @Binding var toc: [Heading]
+    @Binding var currentHeadingID: String?
     @Binding var scrollTarget: String?
 
     func makeCoordinator() -> Coordinator { Coordinator() }
 
     func makeNSView(context: Context) -> WKWebView {
         let coordinator = context.coordinator
-        coordinator.onTOC = { headings in
-            DispatchQueue.main.async { toc = headings }
-        }
+        bind(coordinator)
         coordinator.load(fileURL: fileURL, fallbackText: fallbackText)
         coordinator.renderer.setTheme(theme)
         return coordinator.renderer.webView
@@ -25,9 +24,7 @@ struct MarkdownWebView: NSViewRepresentable {
 
     func updateNSView(_ nsView: WKWebView, context: Context) {
         let coordinator = context.coordinator
-        coordinator.onTOC = { headings in
-            DispatchQueue.main.async { toc = headings }
-        }
+        bind(coordinator)
         nsView.pageZoom = zoom
         coordinator.setTheme(theme)
         coordinator.load(fileURL: fileURL, fallbackText: fallbackText)
@@ -37,16 +34,30 @@ struct MarkdownWebView: NSViewRepresentable {
         }
     }
 
+    private func bind(_ coordinator: Coordinator) {
+        coordinator.onTOC = { headings in
+            DispatchQueue.main.async { toc = headings }
+        }
+        coordinator.onSpy = { id in
+            DispatchQueue.main.async { currentHeadingID = id }
+        }
+    }
+
     final class Coordinator {
         let renderer = Renderer()
         private let monitor = FileMonitor()
         private var loadedPath: String?
         private var currentTheme: String?
+        private var fallbackTextRendered: String?
         var onTOC: (([Heading]) -> Void)?
+        var onSpy: ((String?) -> Void)?
 
         init() {
             renderer.onTOCChanged = { [weak self] headings in
                 self?.onTOC?(headings)
+            }
+            renderer.onCurrentHeadingChanged = { [weak self] id in
+                self?.onSpy?(id)
             }
         }
 
@@ -72,7 +83,5 @@ struct MarkdownWebView: NSViewRepresentable {
             }
             monitor.start(watching: path)
         }
-
-        private var fallbackTextRendered: String?
     }
 }
