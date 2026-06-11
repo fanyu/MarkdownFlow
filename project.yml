@@ -1,4 +1,4 @@
-name: MarkdownPreview
+name: MarkdownFlow
 options:
   bundleIdPrefix: com.fanyu
   deploymentTarget:
@@ -12,32 +12,32 @@ settings:
     DEVELOPMENT_TEAM: K52WP93HZU
 
 targets:
-  MarkdownPreviewApp:
+  MarkdownFlow:
     type: application
     platform: macOS
     sources:
-      - path: MarkdownPreviewApp
+      - path: MarkdownFlowApp
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.fanyu.MarkdownPreviewApp
-        INFOPLIST_FILE: MarkdownPreviewApp/Info.plist
-        CODE_SIGN_ENTITLEMENTS: MarkdownPreviewApp/MarkdownPreviewApp.entitlements
+        PRODUCT_BUNDLE_IDENTIFIER: com.fanyu.MarkdownFlow
+        INFOPLIST_FILE: MarkdownFlowApp/Info.plist
+        CODE_SIGN_ENTITLEMENTS: MarkdownFlowApp/MarkdownFlowApp.entitlements
         CODE_SIGN_STYLE: Automatic
     dependencies:
-      - target: MarkdownPreviewExtension
+      - target: MarkdownFlowExtension
         embed: true
         link: false
 
-  MarkdownPreviewExtension:
+  MarkdownFlowExtension:
     type: app-extension
     platform: macOS
     sources:
-      - path: MarkdownPreviewExtension
+      - path: MarkdownFlowExtension
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.fanyu.MarkdownPreviewApp.MarkdownPreviewExtension
-        INFOPLIST_FILE: MarkdownPreviewExtension/Info.plist
-        CODE_SIGN_ENTITLEMENTS: MarkdownPreviewExtension/MarkdownPreviewExtension.entitlements
+        PRODUCT_BUNDLE_IDENTIFIER: com.fanyu.MarkdownFlow.Extension
+        INFOPLIST_FILE: MarkdownFlowExtension/Info.plist
+        CODE_SIGN_ENTITLEMENTS: MarkdownFlowExtension/MarkdownFlowExtension.entitlements
         CODE_SIGN_STYLE: Automatic
         # XcodeKit lives in Xcode's Developer frameworks, not the SDK
         FRAMEWORK_SEARCH_PATHS:

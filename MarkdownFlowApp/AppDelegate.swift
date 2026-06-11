@@ -5,7 +5,7 @@ import AppKit
 /// Source Editor Extension's toggle notification.
 final class AppDelegate: NSObject, NSApplicationDelegate {
     static let followXcodeKey = "followXcode"
-    static let toggleNotification = Notification.Name("com.fanyu.markdownpreview.toggle")
+    static let toggleNotification = Notification.Name("com.fanyu.markdownflow.toggle")
     static private(set) weak var shared: AppDelegate?
 
     private lazy var panel = PreviewPanel()

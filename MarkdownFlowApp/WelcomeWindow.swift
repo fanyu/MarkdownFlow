@@ -48,7 +48,7 @@ private struct WelcomeView: View {
             Image(nsImage: NSApp.applicationIconImage)
                 .resizable()
                 .frame(width: 128, height: 128)
-            Text("MarkdownPreview")
+            Text("MarkdownFlow")
                 .font(.system(size: 30, weight: .regular))
                 .padding(.top, 8)
             Text("版本 \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")")

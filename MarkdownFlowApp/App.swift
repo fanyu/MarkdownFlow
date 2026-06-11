@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct MarkdownPreviewApp: App {
+struct MarkdownFlowApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @AppStorage(AppDelegate.followXcodeKey) private var followXcode = true
     @AppStorage("zoom") private var zoom = 1.0
@@ -21,7 +21,7 @@ struct MarkdownPreviewApp: App {
         .defaultSize(width: 1280, height: 860)
         .commands {
             CommandGroup(after: .appInfo) {
-                Button("欢迎使用 MarkdownPreview") {
+                Button("欢迎使用 MarkdownFlow") {
                     AppDelegate.shared?.showWelcome()
                 }
                 .keyboardShortcut("1", modifiers: [.command, .shift])

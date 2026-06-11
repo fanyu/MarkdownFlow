@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>MarkdownPreviewExtension</string>
+    <string>MarkdownFlowExtension</string>
     <key>CFBundleIdentifier</key>
-    <string>com.fanyu.MarkdownPreviewApp.MarkdownPreviewExtension</string>
+    <string>com.fanyu.MarkdownFlow.Extension</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>CFBundleShortVersionString</key>
@@ -22,7 +22,7 @@
                 <key>XCSourceEditorCommandClassName</key>
                 <string>$(PRODUCT_MODULE_NAME).SourceEditorCommand</string>
                 <key>XCSourceEditorCommandIdentifier</key>
-                <string>com.fanyu.MarkdownPreviewApp.MarkdownPreviewExtension.TogglePreview</string>
+                <string>com.fanyu.MarkdownFlow.Extension.TogglePreview</string>
                 <key>XCSourceEditorCommandName</key>
                 <string>Toggle Markdown Preview</string>
             </dict>

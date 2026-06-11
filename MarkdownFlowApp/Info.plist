@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>MarkdownPreview</string>
+    <string>MarkdownFlow</string>
     <key>CFBundleIdentifier</key>
-    <string>com.fanyu.MarkdownPreviewApp</string>
+    <string>com.fanyu.MarkdownFlow</string>
     <key>CFBundleVersion</key>
     <string>2</string>
     <key>CFBundleShortVersionString</key>
@@ -15,7 +15,7 @@
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>NSAppleEventsUsageDescription</key>
-    <string>MarkdownPreview needs to read which file is open in Xcode to show a preview.</string>
+    <string>MarkdownFlow needs to read which file is open in Xcode to show a preview.</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
     <key>CFBundleDocumentTypes</key>

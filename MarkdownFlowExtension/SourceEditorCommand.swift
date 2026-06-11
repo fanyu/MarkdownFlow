@@ -10,7 +10,7 @@ class SourceEditorCommand: NSObject, XCSourceEditorCommand {
         // detects it via AppleScript. The command just signals a toggle
         // and makes sure the app is running.
         DistributedNotificationCenter.default().postNotificationName(
-            Notification.Name("com.fanyu.markdownpreview.toggle"),
+            Notification.Name("com.fanyu.markdownflow.toggle"),
             object: nil,
             userInfo: nil,
             deliverImmediately: true
@@ -19,7 +19,7 @@ class SourceEditorCommand: NSObject, XCSourceEditorCommand {
     }
 
     private func launchAppIfNeeded() {
-        let appBundleID = "com.fanyu.MarkdownPreviewApp"
+        let appBundleID = "com.fanyu.MarkdownFlow"
         guard NSRunningApplication.runningApplications(withBundleIdentifier: appBundleID).isEmpty,
               let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: appBundleID)
         else { return }
