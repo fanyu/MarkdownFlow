@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0002137081930DD037C2AC82 /* WelcomeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B923F96B7DB58D4EBAF2456 /* WelcomeWindow.swift */; };
 		12086D5768CAC833A03EB192 /* SourceEditorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A5F631992E466928491357 /* SourceEditorCommand.swift */; };
 		17BD96E93467A9FAB02CB2DC /* PreviewPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E619737BA0D7DEC46B64C813 /* PreviewPanel.swift */; };
 		238365C507A17C41D2EA4232 /* FileMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A257A0A1A550BDDC1A96F866 /* FileMonitor.swift */; };
@@ -69,6 +70,7 @@
 		8EDE5F696701E0CA4F4C1687 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		8F00DC2BBD8E685CD3DD34B3 /* XcodeWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XcodeWatcher.swift; sourceTree = "<group>"; };
 		9179A2785EE21C9051FF024D /* highlight.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = highlight.min.js; sourceTree = "<group>"; };
+		9B923F96B7DB58D4EBAF2456 /* WelcomeWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeWindow.swift; sourceTree = "<group>"; };
 		A257A0A1A550BDDC1A96F866 /* FileMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileMonitor.swift; sourceTree = "<group>"; };
 		A2A5F631992E466928491357 /* SourceEditorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEditorCommand.swift; sourceTree = "<group>"; };
 		D0C25E093A0E2AD935D6FD1E /* highlight-dark.min.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = "highlight-dark.min.css"; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				E619737BA0D7DEC46B64C813 /* PreviewPanel.swift */,
 				82AA034CE8FF0D06B4C7F81E /* ReaderView.swift */,
 				8EDE5F696701E0CA4F4C1687 /* Renderer.swift */,
+				9B923F96B7DB58D4EBAF2456 /* WelcomeWindow.swift */,
 				8F00DC2BBD8E685CD3DD34B3 /* XcodeWatcher.swift */,
 				A0DC17B22CD1E1373D0DCDDF /* Resources */,
 			);
@@ -260,6 +263,7 @@
 				17BD96E93467A9FAB02CB2DC /* PreviewPanel.swift in Sources */,
 				FD0452EA95DE55AE36B18F59 /* ReaderView.swift in Sources */,
 				39CEC6FA8992B0B588DEC8B5 /* Renderer.swift in Sources */,
+				0002137081930DD037C2AC82 /* WelcomeWindow.swift in Sources */,
 				3D252596BA203B13FDF49215 /* XcodeWatcher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -327,7 +331,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -419,7 +423,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

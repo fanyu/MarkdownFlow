@@ -1,11 +1,11 @@
 import SwiftUI
 import WebKit
 
-/// Hosts one Renderer-backed WKWebView per reader window, with live reload
-/// of the displayed file via FSEvents.
+/// Hosts one Renderer-backed WKWebView per reader window, rendering the
+/// document text live (debounced while typing).
 struct MarkdownWebView: NSViewRepresentable {
-    let fileURL: URL?
-    let fallbackText: String
+    let text: String
+    let baseDir: String?
     let theme: String
     let zoom: Double
     @Binding var toc: [Heading]
@@ -17,8 +17,8 @@ struct MarkdownWebView: NSViewRepresentable {
     func makeNSView(context: Context) -> WKWebView {
         let coordinator = context.coordinator
         bind(coordinator)
-        coordinator.load(fileURL: fileURL, fallbackText: fallbackText)
-        coordinator.renderer.setTheme(theme)
+        coordinator.render(text: text, baseDir: baseDir, immediate: true)
+        coordinator.setTheme(theme)
         return coordinator.renderer.webView
     }
 
@@ -27,7 +27,7 @@ struct MarkdownWebView: NSViewRepresentable {
         bind(coordinator)
         nsView.pageZoom = zoom
         coordinator.setTheme(theme)
-        coordinator.load(fileURL: fileURL, fallbackText: fallbackText)
+        coordinator.render(text: text, baseDir: baseDir, immediate: false)
         if let target = scrollTarget {
             coordinator.renderer.scrollToHeading(id: target)
             DispatchQueue.main.async { scrollTarget = nil }
@@ -45,10 +45,10 @@ struct MarkdownWebView: NSViewRepresentable {
 
     final class Coordinator {
         let renderer = Renderer()
-        private let monitor = FileMonitor()
-        private var loadedPath: String?
+        private var renderedText: String?
+        private var renderedBaseDir: String?
         private var currentTheme: String?
-        private var fallbackTextRendered: String?
+        private var pendingRender: DispatchWorkItem?
         var onTOC: (([Heading]) -> Void)?
         var onSpy: ((String?) -> Void)?
 
@@ -67,21 +67,22 @@ struct MarkdownWebView: NSViewRepresentable {
             renderer.setTheme(theme)
         }
 
-        func load(fileURL: URL?, fallbackText: String) {
-            guard let path = fileURL?.path else {
-                if loadedPath != nil || fallbackTextRendered != fallbackText {
-                    fallbackTextRendered = fallbackText
-                    renderer.render(markdown: fallbackText, baseDir: nil)
-                }
-                return
+        func render(text: String, baseDir: String?, immediate: Bool) {
+            guard text != renderedText || baseDir != renderedBaseDir else { return }
+            pendingRender?.cancel()
+            let work = DispatchWorkItem { [weak self] in
+                guard let self else { return }
+                self.renderedText = text
+                self.renderedBaseDir = baseDir
+                self.renderer.render(markdown: text, baseDir: baseDir)
             }
-            guard path != loadedPath else { return }
-            loadedPath = path
-            renderer.renderFile(at: path)
-            monitor.onChange = { [weak self] changedPath in
-                self?.renderer.renderFile(at: changedPath)
+            pendingRender = work
+            if immediate || renderedText == nil {
+                work.perform()
+            } else {
+                // Debounce keystrokes so mermaid re-renders don't thrash.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: work)
             }
-            monitor.start(watching: path)
         }
     }
 }

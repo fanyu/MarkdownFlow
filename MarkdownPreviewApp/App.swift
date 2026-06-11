@@ -7,13 +7,24 @@ struct MarkdownPreviewApp: App {
     @AppStorage("zoom") private var zoom = 1.0
 
     var body: some Scene {
-        DocumentGroup(viewing: MarkdownDocument.self) { configuration in
+        DocumentGroup(newDocument: MarkdownDocument()) { configuration in
             ReaderView(
-                fileURL: configuration.fileURL,
-                fallbackText: configuration.document.text
+                document: configuration.$document,
+                fileURL: configuration.fileURL
             )
         }
+        // The welcome window (AppDelegate.showWelcome) replaces the automatic
+        // untitled document at launch; documents reopen via the recents list
+        // instead of scene restoration so launch is deterministic.
+        .defaultLaunchBehavior(.suppressed)
+        .restorationBehavior(.disabled)
         .commands {
+            CommandGroup(after: .appInfo) {
+                Button("欢迎使用 MarkdownPreview") {
+                    AppDelegate.shared?.showWelcome()
+                }
+                .keyboardShortcut("1", modifiers: [.command, .shift])
+            }
             CommandGroup(after: .toolbar) {
                 Button("Actual Size") { zoom = 1.0 }
                     .keyboardShortcut("0", modifiers: .command)

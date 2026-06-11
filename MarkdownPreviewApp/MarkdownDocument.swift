@@ -5,12 +5,14 @@ extension UTType {
     static let markdownDoc = UTType(importedAs: "net.daringfireball.markdown")
 }
 
-/// Read-only document: content is re-read from disk by the reader (for live
-/// reload), so this only carries the initial text as a fallback.
 struct MarkdownDocument: FileDocument {
     static let readableContentTypes: [UTType] = [.markdownDoc]
 
     var text: String
+
+    init(text: String = "") {
+        self.text = text
+    }
 
     init(configuration: ReadConfiguration) throws {
         guard let data = configuration.file.regularFileContents else {
@@ -20,6 +22,6 @@ struct MarkdownDocument: FileDocument {
     }
 
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-        throw CocoaError(.fileWriteNoPermission)  // viewer only
+        FileWrapper(regularFileWithContents: Data(text.utf8))
     }
 }

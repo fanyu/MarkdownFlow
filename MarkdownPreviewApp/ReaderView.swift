@@ -1,15 +1,24 @@
 import SwiftUI
 
-/// One document window: TOC sidebar + rendered markdown.
+/// One document window: TOC sidebar + rendered markdown, with an optional
+/// source editor pane on the left when editing.
 struct ReaderView: View {
+    @Binding var document: MarkdownDocument
     let fileURL: URL?
-    let fallbackText: String
 
     @AppStorage("theme") private var theme = "auto"
     @AppStorage("zoom") private var zoom = 1.0
+    @State private var isEditing: Bool
     @State private var toc: [Heading] = []
     @State private var currentHeadingID: String?
     @State private var scrollTarget: String?
+
+    init(document: Binding<MarkdownDocument>, fileURL: URL?) {
+        _document = document
+        self.fileURL = fileURL
+        // New, never-saved documents open straight into the editor.
+        _isEditing = State(initialValue: fileURL == nil)
+    }
 
     var body: some View {
         NavigationSplitView {
@@ -36,18 +45,32 @@ struct ReaderView: View {
                 }
             }
         } detail: {
-            MarkdownWebView(
-                fileURL: fileURL,
-                fallbackText: fallbackText,
-                theme: theme,
-                zoom: zoom,
-                toc: $toc,
-                currentHeadingID: $currentHeadingID,
-                scrollTarget: $scrollTarget
-            )
+            HSplitView {
+                if isEditing {
+                    SourceEditor(text: $document.text)
+                        .frame(minWidth: 240)
+                }
+                MarkdownWebView(
+                    text: document.text,
+                    baseDir: fileURL.map { $0.deletingLastPathComponent().path },
+                    theme: theme,
+                    zoom: zoom,
+                    toc: $toc,
+                    currentHeadingID: $currentHeadingID,
+                    scrollTarget: $scrollTarget
+                )
+                .frame(minWidth: 280, maxWidth: .infinity, maxHeight: .infinity)
+            }
             .ignoresSafeArea(edges: .bottom)
         }
         .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Toggle(isOn: $isEditing.animation()) {
+                    Label("Edit", systemImage: "square.and.pencil")
+                }
+                .toggleStyle(.button)
+                .help(isEditing ? "隐藏编辑器" : "编辑 Markdown 源文件")
+            }
             ToolbarItem(placement: .primaryAction) {
                 Picker("Theme", selection: $theme) {
                     Label("Auto", systemImage: "circle.lefthalf.filled").tag("auto")
@@ -58,6 +81,20 @@ struct ReaderView: View {
                 .help("Preview theme")
             }
         }
+    }
+}
+
+/// Plain-text markdown source editor.
+private struct SourceEditor: View {
+    @Binding var text: String
+
+    var body: some View {
+        TextEditor(text: $text)
+            .font(.system(size: 13, design: .monospaced))
+            .lineSpacing(3)
+            .autocorrectionDisabled()
+            .scrollContentBackground(.hidden)
+            .background(Color(nsColor: .textBackgroundColor))
     }
 }
 
